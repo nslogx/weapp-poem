@@ -1,0 +1,13 @@
+{
+  "description": "poem weapp",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram",
+  "appid": "wxb13f7d7721d6da56",
+  "projectname": "weapp-poem",
+  "miniprogramRoot": "./dist"
+}
