@@ -2,6 +2,7 @@ dist
 web
 .wepycache
 .DS_Store
+.idea/
 
 # Logs
 logs
