@@ -27,7 +27,7 @@
         backgroundTextStyle: 'dark',
         navigationBarBackgroundColor: '#fff',
         navigationBarTitleText: '',
-        navigationBarTextStyle: 'black',
+        navigationBarTextStyle: 'black'
       },
       tabBar: {
         borderStyle: 'black',
