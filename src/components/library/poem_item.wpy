@@ -1,0 +1,62 @@
+<style type="less">
+  .poem_content {
+    display: flex;
+    background-color: #fff;
+    flex-direction: column;
+    border-bottom: 0.5rpx solid #e9eaec;
+  }
+
+  .poem_top {
+    display: flex;
+    justify-content: space-between;
+    padding: 15rpx 15rpx;
+  }
+
+  .poem_title {
+    font-size: 36rpx;
+    color: #1c2438;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 70%;
+  }
+
+  .poem_author {
+    font-size: 32rpx;
+    color: #80848F;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .poem_des {
+    font-size: 30rpx;
+    color: #80848F;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0rpx 15rpx 15rpx 15rpx;
+  }
+</style>
+<template>
+  <navigator class="poem_content" wx:for="{{itemList}}" wx:key="item" url="/pages/library/item_detail?value={{item.jsonText}}">
+    <view class="poem_top">
+      <view class="poem_title">{{item.title}}</view>
+      <view class="poem_author">{{item.author}}</view>
+    </view>
+    <view class="poem_des">{{item.shortContent}}</view>
+  </navigator>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class PoemItem extends wepy.component {
+    props = {
+      itemList: []
+    }
+
+    components = {}
+
+    methods = {}
+  }
+</script>

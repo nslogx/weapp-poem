@@ -17,6 +17,8 @@
   "author": "huangjianke <jianke.huang@icloud.com>",
   "license": "MIT",
   "dependencies": {
+    "@minui/wxc-tab": "^1.0.8",
+    "@minui/wxc-toast": "^1.0.9",
     "less": "^3.8.1",
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",

@@ -1,0 +1,30 @@
+<style lang="less">
+
+</style>
+<template>
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '作者'
+    }
+    components = {}
+
+    mixins = []
+
+    data = {}
+
+    computed = {}
+
+    methods = {}
+
+    events = {}
+
+    async onLoad() {
+    }
+  }
+</script>

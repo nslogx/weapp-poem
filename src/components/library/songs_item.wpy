@@ -1,0 +1,46 @@
+<style type="less">
+  .songs_content {
+    display: flex;
+    background-color: #fff;
+    flex-direction: column;
+    border-bottom: 0.5rpx solid #e9eaec;
+  }
+
+  .songs_title {
+    font-size: 34rpx;
+    color: #1c2438;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-left: 15rpx;
+    padding-top: 20rpx;
+  }
+
+  .songs_des {
+    font-size: 30rpx;
+    color: #80848F;
+    padding: 15rpx 15rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+</style>
+<template>
+  <navigator class="songs_content" wx:for="{{itemList}}" wx:key="item" url="/pages/library/item_detail?value={{item.jsonText}}">
+    <view class="songs_title">{{item.chapter}}·{{item.section}}·{{item.title}}</view>
+    <view class="songs_des">{{item.shortContent}}</view>
+  </navigator>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class SongsItem extends wepy.component {
+    props = {
+      itemList: []
+    }
+
+    components = {}
+
+    methods = {}
+  }
+</script>

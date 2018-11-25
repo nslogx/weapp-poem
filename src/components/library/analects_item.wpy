@@ -1,0 +1,46 @@
+<style type="less">
+  .analects_content {
+    display: flex;
+    background-color: #fff;
+    flex-direction: column;
+    border-bottom: 0.5rpx solid #e9eaec;
+  }
+
+  .analects_title {
+    font-size: 34rpx;
+    color: #1c2438;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-left: 15rpx;
+    padding-top: 15rpx;
+  }
+
+  .analects_des {
+    font-size: 30rpx;
+    color: #80848F;
+    padding: 15rpx 15rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+</style>
+<template>
+  <navigator class="analects_content" wx:for="{{itemList}}" wx:key="item" url="/pages/library/item_detail?value={{item.jsonText}}">
+    <view class="analects_title">{{item.chapter}}</view>
+    <view class="analects_des">{{item.shortContent}}</view>
+  </navigator>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class PoemItem extends wepy.component {
+    props = {
+      itemList: []
+    }
+
+    components = {}
+
+    methods = {}
+  }
+</script>

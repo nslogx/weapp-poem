@@ -1,0 +1,62 @@
+<style type="less">
+  .poetry_content {
+    display: flex;
+    background-color: #fff;
+    flex-direction: column;
+    border-bottom: 0.5rpx solid #e9eaec;
+  }
+
+  .poetry_top {
+    display: flex;
+    justify-content: space-between;
+    padding: 15rpx 15rpx;
+  }
+
+  .poetry_title {
+    font-size: 36rpx;
+    color: #1c2438;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 70%;
+  }
+
+  .poetry_author {
+    font-size: 32rpx;
+    color: #80848F;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .poetry_des {
+    font-size: 30rpx;
+    color: #80848F;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0rpx 15rpx 15rpx 15rpx;
+  }
+</style>
+<template>
+  <navigator class="poetry_content" wx:for="{{itemList}}" wx:key="item" url="/pages/library/item_detail?value={{item.jsonText}}">
+    <view class="poetry_top">
+      <view class="poetry_title">{{item.title}}</view>
+      <view class="poetry_author">{{item.dynasty==='T'?'[唐]':'[宋]'}}{{item.author}}</view>
+    </view>
+    <view class="poetry_des">{{item.shortContent}}</view>
+  </navigator>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class PoetryItem extends wepy.component {
+    props = {
+      itemList: []
+    }
+
+    components = {}
+
+    methods = {}
+  }
+</script>

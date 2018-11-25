@@ -1,0 +1,148 @@
+<style lang="less">
+  .item_detail_content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .item_title {
+    font-size: 45rpx;
+    color: #1c2438;
+    padding-top: 50rpx;
+    padding-left: 50rpx;
+    padding-right: 50rpx;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .item_author {
+    font-size: 38rpx;
+    color: #495060;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-top: 15rpx;
+  }
+
+  .view_content {
+    padding-top: 15rpx;
+    padding-left: 50rpx;
+    padding-right: 50rpx;
+    line-height: 70rpx;
+  }
+
+  .item_content {
+    font-size: 38rpx;
+    color: #495060;
+    flex-wrap: wrap;
+  }
+
+  .view_author {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 100rpx;
+  }
+
+  .view_author_top {
+    display: flex;
+    justify-content: space-between;
+    padding: 15rpx 50rpx;
+  }
+
+  .view_author_title {
+    font-size: 30rpx;
+    color: #2d8cf0;
+  }
+
+  .view_author_more {
+    font-size: 30rpx;
+    color: #80848F;
+  }
+
+</style>
+<template>
+  <view class="item_detail_content">
+    <!--标题-->
+    <text class="item_title">{{jsonValue.item_title}}</text>
+    <!--作者-->
+    <text wx:if="{{jsonValue.item_author}}" class="item_author">{{jsonValue.item_author}}</text>
+    <!--内容-->
+    <view class="view_content">
+      <text class="item_content">{{jsonValue.item_content}}</text>
+    </view>
+    <!--作者信息-->
+    <view wx:if="{{author}}" class="view_author">
+      <view class="view_author_top">
+        <view class="view_author_title">作者</view>
+        <view class="view_author_more">更多</view>
+      </view>
+      <view>{{author.intro}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  const AV = require('../../libs/av-weapp-min.js')
+
+  export default class ItemDetail extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+
+    components = {}
+
+    data = {
+      jsonValue: {},
+      author: null
+    }
+
+    computed = {}
+
+    methods = {}
+
+    events = {}
+
+    async onLoad(option) {
+      if (option.value) {
+        this.jsonValue = JSON.parse(unescape(option.value))
+      }
+
+      console.log(this.jsonValue.item_author_id)
+      if (this.jsonValue.item_author_id > 0) {
+        this.getAuthor()
+      }
+    }
+
+    /**
+     * 获取作者信息
+     */
+    getAuthor() {
+      let that = this
+      let query = null
+      if (that.jsonValue.item_type === 0) {
+        // 诗作者
+        query = new AV.Query('poetry_author')
+      } else if (that.jsonValue.item_type === 1) {
+        query = new AV.Query('poems_author')
+      }
+      if (query) {
+        query.equalTo('id', this.jsonValue.item_author_id)
+        query.find().then(function(results) {
+          console.log(results)
+          if (results.length > 0) {
+            that.author = results[0].toJSON()
+            if (that.jsonValue.item_type === 1) {
+              that.author.intro = that.author.intro_l
+            }
+          }
+          that.$apply()
+        }).catch(function(error) {
+          console.error(error)
+        })
+      }
+    }
+  }
+</script>

@@ -1,95 +1,90 @@
 <style lang="less">
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-}
+  @import "./styles/base";
 </style>
 
 <script>
-import wepy from 'wepy'
-import 'wepy-async-function'
+  import wepy from 'wepy'
+  import 'wepy-async-function'
 
-import { setStore } from 'wepy-redux'
-import configStore from './store'
+  import { setStore } from 'wepy-redux'
+  import configStore from './store'
 
-const store = configStore()
-setStore(store)
+  const store = configStore()
+  setStore(store)
 
-export default class extends wepy.app {
-  config = {
-    pages: [
-      'pages/index/index',
-      'pages/library/index'
-    ],
-    window: {
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
-    },
-    tabBar: {
-      borderStyle: 'black',
-      backgroundColor: '#ffffff',
-      list: [
-        {
-          pagePath: 'pages/index/index',
-          iconPath: '',
-          selectedIconPath: '',
-          text: '首页'
-        },
-        {
-          pagePath: 'pages/library/index',
-          iconPath: '',
-          selectedIconPath: '',
-          text: '文库'
-        }
-      ]
-    }
-  }
+  const AV = require('./libs/av-weapp-min.js')
+  AV.init('AxX2aCsCgU1HPyjRnuohjXah-gzGzoHsz', 'KsN99qmPR3DPmSEokGrzYhoK')
 
-  globalData = {
-    userInfo: null
-  }
-
-  constructor () {
-    super()
-    // 开启promise
-    this.use('promisify')
-    this.use('requestfix')
-  }
-
-  onLaunch() {
-    this.testAsync()
-  }
-
-  sleep (s) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('promise resolved')
-      }, s * 1000)
-    })
-  }
-
-  async testAsync () {
-    const data = await this.sleep(3)
-    console.log(data)
-  }
-
-  getUserInfo(cb) {
-    const that = this
-    if (this.globalData.userInfo) {
-      return this.globalData.userInfo
-    }
-    wepy.getUserInfo({
-      success (res) {
-        that.globalData.userInfo = res.userInfo
-        cb && cb(res.userInfo)
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/index/index',
+        'pages/library/index',
+        'pages/library/item_detail',
+        'pages/author/index'
+      ],
+      window: {
+        backgroundTextStyle: 'dark',
+        navigationBarBackgroundColor: '#fff',
+        navigationBarTitleText: '',
+        navigationBarTextStyle: 'black',
+      },
+      tabBar: {
+        borderStyle: 'black',
+        backgroundColor: '#ffffff',
+        list: [
+          {
+            pagePath: 'pages/index/index',
+            iconPath: './assets/tab_home.png',
+            selectedIconPath: './assets/tab_home_selected.png',
+            text: '首页'
+          },
+          {
+            pagePath: 'pages/library/index',
+            iconPath: './assets/tab_coupon.png',
+            selectedIconPath: './assets/tab_coupon_selected.png',
+            text: '文库'
+          },
+          {
+            pagePath: 'pages/author/index',
+            iconPath: './assets/tab_coupon.png',
+            selectedIconPath: './assets/tab_coupon_selected.png',
+            text: '作者'
+          }
+        ]
       }
-    })
+    }
+
+    globalData = {
+      userInfo: null,
+      windowHeight: 0
+    }
+
+    constructor() {
+      super()
+      // 开启promise
+      this.use('promisify')
+      this.use('requestfix')
+    }
+
+    onLaunch() {
+      let that = this
+      wepy.getSystemInfo().then(res => {
+        that.globalData.windowHeight = res.windowHeight * (750 / res.windowWidth)
+      })
+    }
+
+    getUserInfo(cb) {
+      const that = this
+      if (this.globalData.userInfo) {
+        return this.globalData.userInfo
+      }
+      wepy.getUserInfo({
+        success(res) {
+          that.globalData.userInfo = res.userInfo
+          cb && cb(res.userInfo)
+        }
+      })
+    }
   }
-}
 </script>
