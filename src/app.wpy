@@ -18,10 +18,11 @@
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/index/index',
+        'pages/extract/index',
         'pages/library/index',
         'pages/library/item_detail',
-        'pages/author/index'
+        'pages/author/index',
+        'pages/author/author_detail'
       ],
       window: {
         backgroundTextStyle: 'dark',
@@ -32,23 +33,25 @@
       tabBar: {
         borderStyle: 'black',
         backgroundColor: '#ffffff',
+        color: '#8a8a8a',
+        selectedColor: '#2d8cf0',
         list: [
           {
-            pagePath: 'pages/index/index',
-            iconPath: './assets/tab_home.png',
-            selectedIconPath: './assets/tab_home_selected.png',
-            text: '首页'
+            pagePath: 'pages/extract/index',
+            iconPath: './assets/tab_extract.png',
+            selectedIconPath: './assets/tab_extract_s.png',
+            text: '摘录'
           },
           {
             pagePath: 'pages/library/index',
-            iconPath: './assets/tab_coupon.png',
-            selectedIconPath: './assets/tab_coupon_selected.png',
+            iconPath: './assets/tab_library.png',
+            selectedIconPath: './assets/tab_library_s.png',
             text: '文库'
           },
           {
             pagePath: 'pages/author/index',
-            iconPath: './assets/tab_coupon.png',
-            selectedIconPath: './assets/tab_coupon_selected.png',
+            iconPath: './assets/tab_author.png',
+            selectedIconPath: './assets/tab_author_s.png',
             text: '作者'
           }
         ]

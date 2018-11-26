@@ -58,7 +58,6 @@
       current: '0',
       pageSize: 30,
       tabs: ['诗', '词', '论语', '诗经'],
-      windowHeight: 0,
       poetryList: [],
       poemList: [],
       analectsList: [],
@@ -72,9 +71,9 @@
     methods = {
       handleChange({ detail }) {
         this.current = detail.key
-        this.$apply()
         this.isLoadMore = false
         this.isLoading = false
+        this.$apply()
         if (this.current === '0') {
           // 诗
           if (this.poetryList.length === 0) {
@@ -103,7 +102,6 @@
     events = {}
 
     async onLoad() {
-      this.windowHeight = wepy.$instance.globalData.windowHeight
       this.getPoetryList()
       this.$apply()
     }
@@ -156,7 +154,7 @@
       query.limit(that.pageSize)
       if (that.poetryList.length > 0) {
         let poetry = that.poetryList[that.poetryList.length - 1]
-        query.greaterThanOrEqualTo('createdAt', new Date(poetry.createdAt))
+        query.greaterThan('createdAt', new Date(poetry.createdAt))
       }
       query.find().then(function(results) {
         console.log(results)
@@ -202,7 +200,7 @@
       query.limit(that.pageSize)
       if (that.poemList.length > 0) {
         let poem = that.poemList[that.poemList.length - 1]
-        query.greaterThanOrEqualTo('createdAt', new Date(poem.createdAt))
+        query.greaterThan('createdAt', new Date(poem.createdAt))
       }
       query.find().then(function(results) {
         console.log(results)
@@ -247,7 +245,7 @@
       query.limit(that.pageSize)
       if (that.analectsList.length > 0) {
         let analects = that.analectsList[that.analectsList.length - 1]
-        query.greaterThanOrEqualTo('createdAt', new Date(analects.createdAt))
+        query.greaterThan('createdAt', new Date(analects.createdAt))
       }
       query.find().then(function(results) {
         console.log(results)
@@ -293,7 +291,7 @@
       query.limit(that.pageSize)
       if (that.songsList.length > 0) {
         let songs = that.songsList[that.songsList.length - 1]
-        query.greaterThanOrEqualTo('createdAt', new Date(songs.createdAt))
+        query.greaterThan('createdAt', new Date(songs.createdAt))
       }
       query.find().then(function(results) {
         console.log(results)

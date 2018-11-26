@@ -1,30 +1,194 @@
 <style lang="less">
-
+  .top-content {
+    height: 42px;
+  }
 </style>
 <template>
-
+  <view class="container">
+    <!--tab模块-->
+    <i-tabs current="{{ current }}" fixed bindchange="handleChange">
+      <repeat for="{{tabs}}" gkey="index" index="index" item="item">
+        <i-tab key="{{index}}" title="{{item}}"></i-tab>
+      </repeat>
+    </i-tabs>
+    <view class="top-content"></view>
+    <poetryAuthorItem wx:if="{{current === '0'}}" :itemList.sync="poetryList"></poetryAuthorItem>
+    <poemAuthorItem wx:if="{{current === '1'}}" :itemList.sync="poemList"></poemAuthorItem>
+    <i-load-more tip="{{isLoading?'正在加载...':''}}" loading="{{ isLoading }}"/>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import authorItem from '../../components/author/author_item'
+
+  const AV = require('../../libs/av-weapp-min.js')
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '作者'
+      navigationBarTitleText: '作者',
+      enablePullDownRefresh: true,
+      usingComponents: {
+        'i-tabs': '../../components/iview/tabs/index',
+        'i-tab': '../../components/iview/tab/index',
+        'i-load-more': '../../components/iview/load-more/index'
+      }
     }
-    components = {}
+    components = {
+      poetryAuthorItem: authorItem,
+      poemAuthorItem: authorItem
+    }
 
     mixins = []
 
-    data = {}
+    data = {
+      current: '0',
+      pageSize: 30,
+      tabs: ['诗', '词'],
+      poetryList: [],
+      poemList: [],
+      isLoadMore: false,
+      isLoading: false
+    }
 
     computed = {}
 
-    methods = {}
+    methods = {
+      handleChange({ detail }) {
+        this.current = detail.key
+        this.isLoadMore = false
+        this.isLoading = false
+        this.$apply()
+        if (this.current === '0') {
+          // 诗作者
+          if (this.poetryList.length === 0) {
+            this.getPoetryList()
+          }
+        } else if (this.current === '1') {
+          // 词作者
+          console.log(this.poemList.length)
+          if (this.poemList.length === 0) {
+            this.getPoemList()
+          }
+        }
+      }
+    }
 
     events = {}
 
     async onLoad() {
+      this.getPoetryList()
+      this.$apply()
+    }
+
+    onPullDownRefresh() {
+      this.isLoadMore = false
+      this.isLoading = false
+
+      if (this.current === '0') {
+        // 诗
+        this.getPoetryList()
+      } else if (this.current === '1') {
+        // 词
+        this.getPoemList()
+      }
+    }
+
+    onReachBottom() {
+      this.isLoading = true
+      this.isLoadMore = true
+      if (this.current === '0') {
+        // 诗
+        this.getPoetryList()
+      } else if (this.current === '1') {
+        // 词
+        this.getPoemList()
+      }
+    }
+
+    /**
+     * 获取诗人数据列表
+     */
+    getPoetryList() {
+      wepy.showNavigationBarLoading()
+      let that = this
+      if (!that.isLoadMore) that.poetryList = []
+      let query = new AV.Query('poetry_author')
+      query.limit(that.pageSize)
+      if (that.poetryList.length > 0) {
+        let poetry = that.poetryList[that.poetryList.length - 1]
+        query.greaterThan('createdAt', new Date(poetry.createdAt))
+      }
+      query.find().then(function(results) {
+        console.log(results)
+        let items = []
+        for (let item of results) {
+          let value = item.toJSON()
+          let jsonValue = {
+            author_name: value.name,
+            author_intro: value.intro,
+            author_id: value.id,
+            author_type: 0
+          }
+          let jsonText = JSON.stringify(jsonValue)
+          value.jsonText = escape(jsonText)
+          items.push(value)
+        }
+
+        that.poetryList = [...that.poetryList, ...items]
+        that.stopRefresh()
+      }).catch(function(error) {
+        that.stopRefresh()
+        console.error(error)
+      })
+    }
+
+    /**
+     * 获取词人数据列表
+     */
+    getPoemList() {
+      wepy.showNavigationBarLoading()
+      let that = this
+      if (!that.isLoadMore) that.poemList = []
+      let query = new AV.Query('poems_author')
+      query.limit(that.pageSize)
+      if (that.poemList.length > 0) {
+        let poem = that.poemList[that.poemList.length - 1]
+        query.greaterThan('createdAt', new Date(poem.createdAt))
+      }
+      query.find().then(function(results) {
+        console.log(results)
+        let items = []
+        for (let item of results) {
+          let value = item.toJSON()
+          if (value.intro_l === '--') {
+            value.intro = '暂无介绍'
+          } else {
+            value.intro = value.intro_l
+          }
+          let jsonValue = {
+            author_name: value.name,
+            author_intro: value.intro,
+            author_id: value.id,
+            author_type: 1
+          }
+          let jsonText = JSON.stringify(jsonValue)
+          value.jsonText = escape(jsonText)
+          items.push(value)
+        }
+        that.poemList = [...that.poemList, ...items]
+        that.stopRefresh()
+      }).catch(function(error) {
+        that.stopRefresh()
+        console.error(error)
+      })
+    }
+
+    stopRefresh() {
+      this.isLoading = false
+      wepy.stopPullDownRefresh()
+      wepy.hideNavigationBarLoading()
+      this.$apply()
     }
   }
 </script>

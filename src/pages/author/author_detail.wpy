@@ -1,0 +1,205 @@
+<style lang="less">
+  .author_detail_content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .intro_title {
+    font-size: 38rpx;
+    color: #2d8cf0;
+    padding: 20rpx 40rpx;
+  }
+
+  .intro_content {
+    font-size: 38rpx;
+    color: #495060;
+    flex-wrap: wrap;
+    padding: 10rpx 40rpx;
+  }
+
+  .item_author {
+    font-size: 36rpx;
+    color: #495060;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-top: 15rpx;
+  }
+
+  .view_content {
+    padding-top: 20rpx;
+    padding-left: 50rpx;
+    padding-right: 50rpx;
+    line-height: 70rpx;
+  }
+
+  .item_content {
+    font-size: 38rpx;
+    color: #495060;
+    flex-wrap: wrap;
+  }
+
+  .view_author {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 100rpx;
+  }
+
+  .view_author_top {
+    display: flex;
+    justify-content: space-between;
+    padding: 15rpx 50rpx;
+  }
+
+  .view_author_title {
+    font-size: 30rpx;
+    color: #2d8cf0;
+  }
+
+  .view_author_more {
+    display: flex;
+    flex-direction: row;
+    font-size: 30rpx;
+    color: #80848F;
+  }
+
+  .view_author_intro {
+    display: -webkit-box;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    padding-top: 15rpx;
+    padding-left: 50rpx;
+    padding-right: 50rpx;
+    font-size: 30rpx;
+    color: #495060;
+  }
+
+</style>
+<template>
+  <view class="author_detail_content">
+    <!--简介-->
+    <view class="intro_title">简介</view>
+    <view class="intro_content">{{jsonValue.author_intro}}</view>
+    <view class="intro_title">作品</view>
+    <itemList :itemList.sync="itemList"></itemList>
+    <i-load-more tip="{{isLoading?'正在加载...':''}}" loading="{{ isLoading }}"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import itemList from '../../components/author/author_poem_item'
+
+  const AV = require('../../libs/av-weapp-min.js')
+
+  export default class AuthorDetail extends wepy.page {
+    config = {
+      navigationBarTitleText: '',
+      usingComponents: {
+        'i-icon': '../../components/iview/icon/index',
+        'i-load-more': '../../components/iview/load-more/index'
+      }
+    }
+
+    components = {
+      itemList: itemList
+    }
+
+    data = {
+      jsonValue: {},
+      pageSize: 30,
+      isLoadMore: false,
+      isLoading: false,
+      isCompleted: false,
+      itemList: []
+    }
+
+    computed = {}
+
+    methods = {}
+
+    events = {}
+
+    async onLoad(option) {
+      if (option.value) {
+        this.jsonValue = JSON.parse(unescape(option.value))
+        console.log(this.jsonValue)
+        wepy.setNavigationBarTitle({
+          title: this.jsonValue.author_name
+        })
+      }
+      this.getItemList()
+    }
+
+    onReachBottom() {
+      if (!this.isCompleted) {
+        this.isLoading = true
+        this.isLoadMore = true
+        this.getItemList()
+      }
+    }
+
+    /**
+     * 获取作者作品列表
+     */
+    getItemList() {
+      wepy.showNavigationBarLoading()
+      let that = this
+      if (!that.isLoadMore) that.itemList = []
+      let query = null
+      if (that.jsonValue.author_type === 0) {
+        query = new AV.Query('poetry')
+      } else if (that.jsonValue.author_type === 1) {
+        query = new AV.Query('poems')
+      }
+      query.limit(that.pageSize)
+      if (that.itemList.length > 0) {
+        let item = that.itemList[that.itemList.length - 1]
+        query.greaterThan('createdAt', new Date(item.createdAt))
+      }
+      query.equalTo('author_id', this.jsonValue.author_id)
+      query.find().then(function(results) {
+        console.log(results)
+        let items = []
+        for (let item of results) {
+          let value = item.toJSON()
+          let jsonValue = {
+            item_title: value.title,
+            item_author: (value.dynasty === 'T' ? '[唐]' : '[宋]') + value.author,
+            item_content: value.content.split('|').join('\n'),
+            item_type: that.jsonValue.author_type === 0 ? 0 : 1,
+            item_author_id: value.author_id
+          }
+          let jsonText = JSON.stringify(jsonValue)
+          value.jsonText = escape(jsonText)
+          if (value.content.length > 0) {
+            let array = value.content.split('|')
+            if (array.length > 0) {
+              value.shortContent = array[0]
+            }
+          } else {
+            value.shortContent = '暂无内容'
+          }
+          items.push(value)
+        }
+        that.isCompleted = items.length < that.pageSize
+        that.itemList = [...that.itemList, ...items]
+        that.stopRefresh()
+      }).catch(function(error) {
+        that.stopRefresh()
+        console.error(error)
+      })
+    }
+
+    stopRefresh() {
+      this.isLoading = false
+      wepy.stopPullDownRefresh()
+      wepy.hideNavigationBarLoading()
+      this.$apply()
+    }
+  }
+</script>

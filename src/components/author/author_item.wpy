@@ -1,0 +1,46 @@
+<style type="less">
+  .author_content {
+    display: flex;
+    background-color: #fff;
+    flex-direction: column;
+    border-bottom: 0.5rpx solid #e9eaec;
+  }
+
+  .author_title {
+    font-size: 34rpx;
+    color: #1c2438;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-left: 15rpx;
+    padding-top: 15rpx;
+  }
+
+  .author_des {
+    font-size: 30rpx;
+    color: #80848F;
+    padding: 15rpx 15rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+</style>
+<template>
+  <navigator class="author_content" wx:for="{{itemList}}" wx:key="item" url="/pages/author/author_detail?value={{item.jsonText}}">
+    <view class="author_title">{{item.name}}</view>
+    <view class="author_des">{{item.intro}}</view>
+  </navigator>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class AuthorItem extends wepy.component {
+    props = {
+      itemList: []
+    }
+
+    components = {}
+
+    methods = {}
+  }
+</script>

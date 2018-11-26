@@ -1,0 +1,58 @@
+<style type="less">
+  .card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #fff;
+    width: 80%;
+    height: 80%;
+  }
+
+  .extract_author_view {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .extract_author {
+    padding: 50rpx 40rpx;
+    writing-mode: vertical-lr;
+  }
+
+  .extract_view {
+    padding: 50rpx 40rpx;
+    writing-mode: vertical-rl;
+    font-size: 60rpx;
+    letter-spacing: 15rpx
+  }
+
+  .extract_view text {
+    display: block;
+  }
+</style>
+<template>
+  <view class="card">
+    <view class="extract_author_view">
+      <view class="extract_author">
+        <text>{{item.author}}</text>
+      </view>
+    </view>
+    <view class="extract_view">
+      <repeat for="{{item.content}}" key="index" index="index" item="text_info">
+        <text>{{text_info}}</text>
+      </repeat>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class CardItem extends wepy.component {
+    props = {
+      item: {}
+    }
+
+    components = {}
+
+    methods = {}
+  }
+</script>

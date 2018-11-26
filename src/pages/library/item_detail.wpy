@@ -16,7 +16,7 @@
   }
 
   .item_author {
-    font-size: 38rpx;
+    font-size: 36rpx;
     color: #495060;
     overflow: hidden;
     white-space: nowrap;
@@ -25,7 +25,7 @@
   }
 
   .view_content {
-    padding-top: 15rpx;
+    padding-top: 20rpx;
     padding-left: 50rpx;
     padding-right: 50rpx;
     line-height: 70rpx;
@@ -56,8 +56,28 @@
   }
 
   .view_author_more {
+    display: flex;
+    flex-direction: row;
     font-size: 30rpx;
     color: #80848F;
+  }
+
+  .view_author_intro {
+    display: -webkit-box;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    padding-top: 15rpx;
+    padding-left: 50rpx;
+    padding-right: 50rpx;
+    font-size: 30rpx;
+    color: #495060;
+  }
+
+  .view_temp {
+    height: 100rpx;
   }
 
 </style>
@@ -75,10 +95,15 @@
     <view wx:if="{{author}}" class="view_author">
       <view class="view_author_top">
         <view class="view_author_title">作者</view>
-        <view class="view_author_more">更多</view>
+        <view class="view_author_more" bindtap="tapMore">
+          <view>更多</view>
+          <i-icon type="enter" size="12" color="#80848F" />
+        </view>
       </view>
-      <view>{{author.intro}}</view>
+      <view class="view_author_intro">{{author.intro}}</view>
+      <view class="view_temp"></view>
     </view>
+    <i-toast id="toast" />
   </view>
 </template>
 
@@ -86,10 +111,15 @@
   import wepy from 'wepy'
 
   const AV = require('../../libs/av-weapp-min.js')
+  const { $Toast } = require('../../components/iview/base/index')
 
   export default class ItemDetail extends wepy.page {
     config = {
-      navigationBarTitleText: ''
+      navigationBarTitleText: '',
+      usingComponents: {
+        'i-icon': '../../components/iview/icon/index',
+        'i-toast': '../../components/iview/toast/index'
+      }
     }
 
     components = {}
@@ -101,7 +131,20 @@
 
     computed = {}
 
-    methods = {}
+    methods = {
+      tapMore() {
+        let jsonValue = {
+          author_name: this.author.name,
+          author_intro: this.author.intro,
+          author_id: this.author.id,
+          author_type: this.jsonValue.item_type === 0 ? 0 : 1
+        }
+        let jsonText = escape(JSON.stringify(jsonValue))
+        wepy.navigateTo({
+          url: '/pages/author/author_detail?value=' + jsonText
+        })
+      }
+    }
 
     events = {}
 
@@ -109,8 +152,6 @@
       if (option.value) {
         this.jsonValue = JSON.parse(unescape(option.value))
       }
-
-      console.log(this.jsonValue.item_author_id)
       if (this.jsonValue.item_author_id > 0) {
         this.getAuthor()
       }
@@ -120,6 +161,10 @@
      * 获取作者信息
      */
     getAuthor() {
+      $Toast({
+        content: '加载中...',
+        type: 'loading'
+      })
       let that = this
       let query = null
       if (that.jsonValue.item_type === 0) {
@@ -139,7 +184,9 @@
             }
           }
           that.$apply()
+          $Toast.hide()
         }).catch(function(error) {
+          $Toast.hide()
           console.error(error)
         })
       }

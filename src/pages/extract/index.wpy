@@ -1,0 +1,178 @@
+<style lang="less">
+  page {
+    background-color: #efefef;
+    height: 100%;
+  }
+
+  .content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: #efefef;
+  }
+
+</style>
+<template>
+  <view bindtap="tapCard" class="content">
+    <cardItem wx:if="{{item.item_id > 0}}" :item.sync="item"></cardItem>
+    <i-toast id="toast" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import cardItem from '../../components/extract/card_item'
+
+  const { $Toast } = require('../../components/iview/base/index')
+  const AV = require('../../libs/av-weapp-min.js')
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '摘录',
+      enablePullDownRefresh: true,
+      usingComponents: {
+        'i-toast': '../../components/iview/toast/index'
+      }
+    }
+    components = {
+      cardItem: cardItem
+    }
+
+    mixins = []
+
+    data = {
+      itemList: [],
+      item: {}
+    }
+
+    computed = {}
+
+    methods = {
+      tapCard() {
+        this.getItem()
+      }
+    }
+
+    events = {}
+
+    async onLoad() {
+      wepy.showShareMenu()
+      this.getItemList()
+      this.$apply()
+    }
+
+    onPullDownRefresh() {
+      this.randomItem()
+      this.$apply()
+      wepy.stopPullDownRefresh()
+    }
+
+    onShareAppMessage(option) {
+      let title = this.item.author
+      let path = '/pages/extract/index'
+      return {
+        title: title,
+        path: path
+      }
+    }
+
+    getItemList() {
+      $Toast({
+        content: '加载中...',
+        type: 'loading'
+      })
+      let that = this
+      let query = new AV.Query('extract')
+      query.find().then(function(results) {
+        console.log(results)
+        for (let value of results) {
+          that.itemList.push(value.toJSON())
+        }
+        that.randomItem()
+        that.$apply()
+        $Toast.hide()
+      }).catch(function(error) {
+        $Toast.hide()
+        console.error(error)
+      })
+    }
+
+    getItem() {
+      if (this.item) {
+        $Toast({
+          content: '加载中...',
+          type: 'loading'
+        })
+        let that = this
+        let query = null
+        if (that.item.type === 0) {
+          // 诗
+          query = new AV.Query('poetry')
+        } else if (that.item.type === 1) {
+          // 词
+          query = new AV.Query('poems')
+        }
+        if (query) {
+          query.equalTo('id', that.item.item_id)
+          query.find().then(function(results) {
+            console.log(results)
+            if (results.length > 0) {
+              let jsonText = ''
+              let value = results[0].toJSON()
+              if (that.item.type === 0) {
+                // 诗
+                let jsonValue = {
+                  item_title: value.title,
+                  item_author: (value.dynasty === 'T' ? '[唐]' : '[宋]') + value.author,
+                  item_content: value.content.split('|').join('\n'),
+                  item_type: 0,
+                  item_author_id: value.author_id
+                }
+                jsonText = escape(JSON.stringify(jsonValue))
+              } else if (that.item.type === 1) {
+                // 词
+                let jsonValue = {
+                  item_title: value.title,
+                  item_author: value.author,
+                  item_content: value.content.split('|').join('\n'),
+                  item_type: 1,
+                  item_author_id: value.author_id
+                }
+                jsonText = escape(JSON.stringify(jsonValue))
+              }
+              wepy.navigateTo({
+                url: '/pages/library/item_detail?value=' + jsonText
+              })
+            }
+            $Toast.hide()
+          }).catch(function(error) {
+            $Toast.hide()
+            console.error(error)
+          })
+        }
+      }
+    }
+
+    randomItem() {
+      if (this.itemList.length > 0) {
+        let index = this.randomNum(0, this.itemList.length - 1)
+        console.log(index)
+        this.item = this.itemList[index]
+      }
+    }
+
+    randomNum(min, max) {
+      switch (arguments.length) {
+        case 1:
+          return parseInt(Math.random() * min + 1, 10)
+        case 2:
+          return parseInt(Math.random() * (max - min + 1) + min, 10)
+        default:
+          return 0
+      }
+    }
+  }
+</script>
