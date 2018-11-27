@@ -6,12 +6,6 @@
   import wepy from 'wepy'
   import 'wepy-async-function'
 
-  import { setStore } from 'wepy-redux'
-  import configStore from './store'
-
-  const store = configStore()
-  setStore(store)
-
   const AV = require('./libs/av-weapp-min.js')
   AV.init('AxX2aCsCgU1HPyjRnuohjXah-gzGzoHsz', 'KsN99qmPR3DPmSEokGrzYhoK')
 
