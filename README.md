@@ -39,6 +39,12 @@ wepy build --watch
 |文库|作者|
 |![文库](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/img02.png) | ![作者](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/img03.png)|
 
+### Todo
+
+- [ ] 增加搜索功能
+- [ ] 增加生成摘录卡片功能
+- [ ] 增加收藏功能
+
 ### LICENSE
 
 MIT License
