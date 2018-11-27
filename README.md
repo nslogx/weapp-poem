@@ -30,10 +30,10 @@ wepy build --watch
 ![诗词墨客](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/code.png)
 
 ## 部分页面展示
-
-![摘录](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/img00.png)
-![详情](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/img01.png)
-![文库列表](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/img02.png)
+| 摘录 | 详情 | 文库 |
+| :---: | :---: | :---: |
+|![摘录](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/img00.png) | ![详情](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/img01.png)|
+![文库列表](https://raw.githubusercontent.com/huangjianke/weapp-poem/master/images/img02.png)|
 
 ### LICENSE
 
