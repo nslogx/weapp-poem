@@ -7,7 +7,7 @@
   import 'wepy-async-function'
 
   const AV = require('./libs/av-weapp-min.js')
-  AV.init('AxX2aCsCgU1HPyjRnuohjXah-gzGzoHsz', 'KsN99qmPR3DPmSEokGrzYhoK')
+  AV.init('your appkey', 'your appsecret')
 
   export default class extends wepy.app {
     config = {

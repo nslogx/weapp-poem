@@ -24,6 +24,8 @@ wepy build --watch
 
 [Wepy](https://github.com/wepyjs/wepy) 具体使用可参考：[WePY项目的创建与使用](https://tencent.github.io/wepy/document.html#/?id=wepy%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8)
 
+古诗词数据存储于 [LeanCloud](https://leancloud.cn/)，使用前先在[LeanCloud](https://leancloud.cn/)注册App，然后导入由 [chinese-poetry-mysql](https://github.com/KomaBeyond/chinese-poetry-mysql) 数据整理的 mysql 格式数据，并在 `app.wpy` 中配置您自己的App相关信息
+
 ### 扫码体验
 
 扫码访问小程序:
